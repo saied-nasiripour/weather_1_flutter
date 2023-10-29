@@ -22,19 +22,56 @@ import 'package:weather_1_flutter/features/weather_feature/domain/entities/curre
 
 class CurrentCityModel extends CurrentCityEntity{
   const CurrentCityModel({
+    // coordinate => Latitude & Longitude
     Coord? coord,
+    /*
+    Weather condition:
+    - id
+    - main(Rain, Snow, Clouds etc.)
+    - description
+    - icon
+     */
     List<Weather>? weather,
+    // base: Internal parameter
     String? base,
+    /*
+    main:
+    - Temperature (Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit)
+    - Atmospheric pressure on the sea level, hPa
+    - Atmospheric pressure on the ground level, hPa
+    - Humidity, %
+    - Minimum temperature at the moment (Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit).
+    - Maximum temperature at the moment (Unit Default: Kelvin, Metric: Celsius, Imperial: Fahrenheit).
+    */
     Main? main,
+    // Visibility, meter. The maximum value of the visibility is 10 km
     num? visibility,
+    /*
+    Wind:
+    - speed (Unit Default: meter/sec)
+    - direction (degrees )
+    - gust (Unit Default: meter/sec)
+    */
     Wind? wind,
+    // Rain volume
     Rain? rain,
+    // Cloudiness, %
     Clouds? clouds,
+    // dt: Internal parameter
     num? dt,
+    /*Sys => Internal parameter:
+    - Country code (GB, JP etc.)
+    - Sunrise time(unix, UTC)
+    - Sunset time(unix, UTC)
+    */
     Sys? sys,
+    // Shift in seconds from UTC
     num? timezone,
+    // City ID
     num? id,
+    // City name
     String? name,
+    // cod: Internal parameter
     num? cod,
   }): super(
     coord: coord,
