@@ -32,3 +32,4 @@ class WeatherRepositoryImplementation extends WeatherRepositoryAbstract{
     }
   }
 }
+
