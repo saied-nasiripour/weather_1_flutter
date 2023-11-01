@@ -1,0 +1,18 @@
+
+import 'package:flutter/material.dart';
+import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
+
+@immutable
+abstract class CwStatus{}
+
+class CwLoading extends CwStatus {}
+
+class CwCompleted extends CwStatus {
+  final CurrentCityEntity currentCityEntity;
+  CwCompleted(this.currentCityEntity);
+}
+
+class CwError extends CwStatus {
+  final String message;
+  CwError(this.message);
+}
