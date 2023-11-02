@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:weather_1_flutter/core/widgets/main_wrapper.dart';
+import 'package:weather_1_flutter/locator.dart';
 
-void main() {
+void main() async{
+  await setup();
   runApp(const MyApp());
 }
 
