@@ -15,8 +15,6 @@ setup(){
   // ------------------------------ Providing ------------------------------
   locator.registerSingleton<ApiProvider>(ApiProvider());
 
-
-
   // ------------------------------ Injection ------------------------------
   /*
   The registerSingleton() method takes two parameters:
