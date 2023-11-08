@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:weather_1_flutter/core/params/forecast_params.dart';
 import 'package:weather_1_flutter/core/resources/data_state.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/use_cases/get_current_weather_usecase.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/cw_status.dart';

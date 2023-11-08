@@ -5,6 +5,7 @@ without any additional processing
 
 import 'package:dio/dio.dart';
 import 'package:weather_1_flutter/core/constants/api_constants.dart';
+import 'package:weather_1_flutter/core/params/forecast_params.dart';
 
 class ApiProvider {
   final Dio _dio = Dio();
@@ -22,6 +23,22 @@ class ApiProvider {
         'lang': 'en', // fa | en
       }
     );
+    return response;
+  }
+
+  // 7 days forecast api
+  Future<dynamic> sendRequest7DaysForcast(ForecastParams params) async {
+
+    var response = await _dio.get(
+        "${ApiConstants.baseUrl}/data/2.5/onecall",
+        queryParameters: {
+          'lat': params.lat,
+          'lon': params.lon,
+          'exclude': 'minutely,hourly',
+          'appid': apiKey,
+          'units': 'metric'
+        });
+
     return response;
   }
 

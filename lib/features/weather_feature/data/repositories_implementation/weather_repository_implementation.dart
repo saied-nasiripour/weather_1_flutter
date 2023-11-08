@@ -3,10 +3,13 @@ The task of this section is pass to converted JSON into a UseCases...
 without any additional processing
 */
 import 'package:dio/dio.dart';
+import 'package:weather_1_flutter/core/params/forecast_params.dart';
 import 'package:weather_1_flutter/core/resources/data_state.dart';
 import 'package:weather_1_flutter/features/weather_feature/data/data_source/remote/api_provider.dart';
 import 'package:weather_1_flutter/features/weather_feature/data/models/current_city_model.dart';
+import 'package:weather_1_flutter/features/weather_feature/data/models/forecast_days_model.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
+import 'package:weather_1_flutter/features/weather_feature/domain/entities/forecast_days_entity.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/repositories_abstract/weather_repository_abstract.dart';
 
 class WeatherRepositoryImplementation extends WeatherRepositoryAbstract{
@@ -29,6 +32,23 @@ class WeatherRepositoryImplementation extends WeatherRepositoryAbstract{
       }
     }catch(e) {
       return const DataFailed('please check your connection');
+    }
+  }
+
+  @override
+  Future<DataState<ForecastDaysEntity>> fetchForecastWeatherData(ForecastParams params) async{
+    try{
+      Response response = await apiProvider.sendRequest7DaysForcast(params);
+
+      if(response.statusCode == 200){
+        ForecastDaysEntity forecastDaysEntity = ForecastDaysModel.fromJson(response.data);
+        return DataSuccess(forecastDaysEntity);
+      }else{
+        return const DataFailed("Something Went Wrong. try again...");
+      }
+    }catch(e){
+      print(e.toString());
+      return const DataFailed("please check your connection...");
     }
   }
 }
