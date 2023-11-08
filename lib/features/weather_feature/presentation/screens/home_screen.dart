@@ -2,11 +2,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:weather_1_flutter/core/params/forecast_params.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/dot_loading_widget.dart';
+import 'package:weather_1_flutter/features/weather_feature/data/models/forecast_days_model.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
+import 'package:weather_1_flutter/features/weather_feature/domain/entities/forecast_days_entity.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/cw_status.dart';
+import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/fw_status.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/home_bloc.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/app_background.dart';
+import 'package:weather_1_flutter/features/weather_feature/presentation/widgets/day_weather_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -38,17 +43,31 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           BlocBuilder<HomeBloc, HomeState>(
+            buildWhen: (previous, current) {
+              // rebuild just when CwStatus changed
+              if (previous.cwStatus == current.cwStatus) {
+                return false;
+              }
+              return true;
+            },
             builder: (context, state) {
-              // --------------------- Loading Status ---------------------
+              // --------------------- Loading Status for CwLoading ---------------------
               if (state.cwStatus is CwLoading) {
                 return const Expanded(child: DotLoadingWidget());
               }
-              // --------------------- Completed Status ---------------------
+              // --------------------- Completed Status for CwCompleted ---------------------
               if (state.cwStatus is CwCompleted) {
                 /// cast
                 final CwCompleted cwCompleted = state.cwStatus as CwCompleted;
                 final CurrentCityEntity currentCityEntity =
                     cwCompleted.currentCityEntity;
+
+                // create params for api call
+                final ForecastParams forecastParams = ForecastParams(currentCityEntity.coord!.lat!, currentCityEntity.coord!.lon!);
+
+                // start load Fw event
+                BlocProvider.of<HomeBloc>(context).add(LoadFwEvent(forecastParams));
+
                 return Expanded(
                   child: ListView(
                     children: [
@@ -200,9 +219,72 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
-                      /// divider
+                      // divider
                       Padding(
                         padding: const EdgeInsets.only(top: 30),
+                        child: Container(
+                          color: Colors.white24,
+                          height: 2,
+                          width: double.infinity,
+                        ),
+                      ),
+
+                      // forecast weather 7 days
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 100,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Center(
+                              child: BlocBuilder<HomeBloc, HomeState>(
+                                builder: (BuildContext context, state) {
+
+                                  // show Loading State for Fw
+                                  if (state.fwStatus is FwLoading) {
+                                    return const DotLoadingWidget();
+                                  }
+
+                                  // show Completed State for Fw
+                                  if (state.fwStatus is FwCompleted) {
+                                    /// casting
+                                    final FwCompleted fwCompleted = state.fwStatus as FwCompleted;
+                                    final ForecastDaysEntity forecastDaysEntity = fwCompleted.forecastDaysEntity;
+                                    final List<Daily> mainDaily = forecastDaysEntity.daily!;
+
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: 8,
+                                      itemBuilder: (BuildContext context,
+                                          int index,) {
+                                        return DaysWeatherView(
+                                          daily: mainDaily[index],);
+                                      },);
+                                  }
+
+                                  // show Error State for Fw
+                                  if (state.fwStatus is FwError) {
+                                    final FwError fwError = state.fwStatus as FwError;
+                                    return Center(
+                                      child: Text(fwError.message!),
+                                    );
+                                  }
+
+                                  /// show Default State for Fw
+                                  return Container();
+
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // divider
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15),
                         child: Container(
                           color: Colors.white24,
                           height: 2,
@@ -213,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }
-              // --------------------- Error Status ---------------------
+              // --------------------- Error Status for CwError ---------------------
               if (state.cwStatus is CwError) {
                 return const Center(
                   child: Text('error'),

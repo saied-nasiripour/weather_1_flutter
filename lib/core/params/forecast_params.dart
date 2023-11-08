@@ -1,7 +1,7 @@
 
 class ForecastParams{
-  double lat;
-  double lon;
+  num lat;
+  num lon;
 
   ForecastParams(this.lat, this.lon);
 }
