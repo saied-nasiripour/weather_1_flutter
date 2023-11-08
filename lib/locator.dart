@@ -4,6 +4,7 @@ import 'package:weather_1_flutter/features/weather_feature/data/data_source/remo
 import 'package:weather_1_flutter/features/weather_feature/data/repositories_implementation/weather_repository_implementation.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/repositories_abstract/weather_repository_abstract.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/use_cases/get_current_weather_usecase.dart';
+import 'package:weather_1_flutter/features/weather_feature/domain/use_cases/get_forecast_weather_usecase.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/home_bloc.dart';
 
 
@@ -26,7 +27,8 @@ setup(){
 
   // use-case
   locator.registerSingleton<GetCurrentWeatherUseCase>(GetCurrentWeatherUseCase(locator()));
+  locator.registerSingleton<GetForecastWeatherUseCase>(GetForecastWeatherUseCase(locator()));
 
   // BloC
-  locator.registerSingleton<HomeBloc>(HomeBloc(locator()));
+  locator.registerSingleton<HomeBloc>(HomeBloc(locator(),locator()));
 }
