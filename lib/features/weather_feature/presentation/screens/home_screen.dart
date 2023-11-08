@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -38,9 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
+              // --------------------- Loading Status ---------------------
               if (state.cwStatus is CwLoading) {
                 return const Expanded(child: DotLoadingWidget());
               }
+              // --------------------- Completed Status ---------------------
               if (state.cwStatus is CwCompleted) {
                 /// cast
                 final CwCompleted cwCompleted = state.cwStatus as CwCompleted;
@@ -200,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }
+              // --------------------- Error Status ---------------------
               if (state.cwStatus is CwError) {
                 return const Center(
                   child: Text('error'),
@@ -213,4 +217,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
