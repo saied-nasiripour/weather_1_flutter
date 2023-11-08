@@ -38,7 +38,7 @@ class WeatherRepositoryImplementation extends WeatherRepositoryAbstract{
   @override
   Future<DataState<ForecastDaysEntity>> fetchForecastWeatherData(ForecastParams params) async{
     try{
-      Response response = await apiProvider.sendRequest7DaysForcast(params);
+      Response response = await apiProvider.sendRequest7DaysForecast(params);
 
       if(response.statusCode == 200){
         ForecastDaysEntity forecastDaysEntity = ForecastDaysModel.fromJson(response.data);

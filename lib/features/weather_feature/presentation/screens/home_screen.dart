@@ -47,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
               if (state.cwStatus is CwCompleted) {
                 /// cast
                 final CwCompleted cwCompleted = state.cwStatus as CwCompleted;
-
                 final CurrentCityEntity currentCityEntity =
                     cwCompleted.currentCityEntity;
                 return Expanded(
@@ -177,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 10),
 
                       /// pageView Indicator
