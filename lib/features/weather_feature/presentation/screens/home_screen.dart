@@ -198,7 +198,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 curve: Curves.bounceOut,
                               ),
                         ),
-                      )
+                      ),
+
+                      /// divider
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Container(
+                          color: Colors.white24,
+                          height: 2,
+                          width: double.infinity,
+                        ),
+                      ),
                     ],
                   ),
                 );
