@@ -32,13 +32,26 @@ class ApiProvider {
     var response = await _dio.get(
         "${ApiConstants.baseUrl}/data/2.5/onecall",
         queryParameters: {
-          'lat': params.lat,
-          'lon': params.lon,
+          'lat': params.lat, // 35.6944
+          'lon': params.lon, // 51.4215
           'exclude': 'minutely,hourly',
           'appid': apiKey,
-          'units': 'metric'
+          'units': 'metric',
+          'lang': 'en', // fa | en
         });
 
+    return response;
+  }
+
+  // city name suggest api
+  Future<dynamic> sendRequestCitySuggestion(String prefix) async {
+    var response= await _dio.get("http://geodb-free-service.wirefreethought.com/v1/geo/cities",
+    queryParameters: {
+      'limit': 7,
+      'offset': 0,
+      'namePrefix': prefix
+    },
+    );
     return response;
   }
 

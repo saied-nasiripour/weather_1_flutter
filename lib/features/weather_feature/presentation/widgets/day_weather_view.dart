@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:weather_1_flutter/core/utils/date_converter.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/app_background.dart';
@@ -6,14 +5,15 @@ import 'package:weather_1_flutter/features/weather_feature/data/models/forecast_
 
 class DaysWeatherView extends StatefulWidget {
   final Daily daily;
+
   const DaysWeatherView({super.key, required this.daily});
 
   @override
   State<DaysWeatherView> createState() => _DaysWeatherViewState();
 }
 
-class _DaysWeatherViewState extends State<DaysWeatherView> with SingleTickerProviderStateMixin{
-
+class _DaysWeatherViewState extends State<DaysWeatherView>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation animation;
 
@@ -22,24 +22,27 @@ class _DaysWeatherViewState extends State<DaysWeatherView> with SingleTickerProv
     // TODO: implement initState
     super.initState();
 
-    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     animation = Tween(
       begin: -1.0,
       end: 0.0,
-    ).animate(CurvedAnimation(parent: animationController, curve: const Interval(0.5, 1,curve: Curves.decelerate)));
+    ).animate(CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.5, 1, curve: Curves.decelerate)));
     animationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-
     final double width = MediaQuery.of(context).size.width;
 
     return AnimatedBuilder(
       animation: animationController,
-      builder: (context,child){
+      builder: (context, child) {
         return Transform(
-          transform: Matrix4.translationValues(animation.value * width, 0.0, 0.0),
+          transform:
+              Matrix4.translationValues(animation.value * width, 0.0, 0.0),
           child: Padding(
             padding: const EdgeInsets.only(right: 5),
             child: Card(
@@ -50,20 +53,28 @@ class _DaysWeatherViewState extends State<DaysWeatherView> with SingleTickerProv
                 height: 50,
                 child: Column(
                   children: [
-                    Text(DateConverter.changeDtToDateTime(widget.daily.dt),
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),),
+                    Text(
+                      DateConverter.changeDtToDateTime(widget.daily.dt),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
-                      child: AppBackground.setIconForMain(widget.daily.weather![0].description),),
+                      child: AppBackground.setIconForMain(
+                          widget.daily.weather![0].description),
+                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
                           "${widget.daily.temp!.day!.round()}\u00B0",
-                          style: const TextStyle(fontSize: 15, color: Colors.white),),
-                      ),),
+                          style: const TextStyle(
+                              fontSize: 15, color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ],
-                ),),
+                ),
+              ),
             ),
           ),
         );

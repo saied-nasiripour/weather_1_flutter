@@ -51,11 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
               return true;
             },
             builder: (context, state) {
-              // --------------------- Loading Status for CwLoading ---------------------
+              // --------------------- show Loading Status for Current Weather (CwLoading) ---------------------
               if (state.cwStatus is CwLoading) {
                 return const Expanded(child: DotLoadingWidget());
               }
-              // --------------------- Completed Status for CwCompleted ---------------------
+              // --------------------- show Completed Status for Current Weather (CwCompleted) ---------------------
               if (state.cwStatus is CwCompleted) {
                 /// cast
                 final CwCompleted cwCompleted = state.cwStatus as CwCompleted;
@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Expanded(
                   child: ListView(
                     children: [
-                      /// PageView
+                      // PageView
                       Padding(
                         padding: EdgeInsets.only(top: height * 0.02),
                         child: SizedBox(
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       mainAxisAlignment:
                                       MainAxisAlignment.center,
                                       children: [
-                                        /// Max Temp
+                                        // --------------------- Max Temp ---------------------
                                         Column(
                                           children: [
                                             const Text(
@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
 
-                                        /// divider
+                                        // divider
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               left: 10.0, right: 10.0),
@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
 
-                                        /// Min Temp
+                                        // --------------------- Min Temp ---------------------
                                         Column(
                                           children: [
                                             const Text(
@@ -198,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       const SizedBox(height: 10),
 
-                      /// pageView Indicator
+                      // --------------------- pageView Indicator ---------------------
                       Center(
                         child: SmoothPageIndicator(
                           controller: _pageController,
@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
-                      // forecast weather 7 days
+                      // --------------------- forecast weather 7 days ---------------------
                       Padding(
                         padding: const EdgeInsets.only(top: 15),
                         child: SizedBox(
@@ -241,14 +241,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: BlocBuilder<HomeBloc, HomeState>(
                                 builder: (BuildContext context, state) {
 
-                                  // show Loading State for Fw
+                                  // show Loading State for Forecast Weather
                                   if (state.fwStatus is FwLoading) {
                                     return const DotLoadingWidget();
                                   }
 
-                                  // show Completed State for Fw
+                                  // show Completed State for Forecast Weather
                                   if (state.fwStatus is FwCompleted) {
-                                    /// casting
+                                    // casting
                                     final FwCompleted fwCompleted = state.fwStatus as FwCompleted;
                                     final ForecastDaysEntity forecastDaysEntity = fwCompleted.forecastDaysEntity;
                                     final List<Daily> mainDaily = forecastDaysEntity.daily!;
@@ -264,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },);
                                   }
 
-                                  // show Error State for Fw
+                                  // show Error State for Forecast Weather
                                   if (state.fwStatus is FwError) {
                                     final FwError fwError = state.fwStatus as FwError;
                                     return Center(
@@ -272,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   }
 
-                                  /// show Default State for Fw
+                                  // show Default State for Fw
                                   return Container();
 
                                 },
@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }
-              // --------------------- Error Status for CwError ---------------------
+              // --------------------- show Error Status for Current Weather (CwError) ---------------------
               if (state.cwStatus is CwError) {
                 return const Center(
                   child: Text('error'),
