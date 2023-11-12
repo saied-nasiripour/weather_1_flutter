@@ -5,13 +5,17 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:weather_1_flutter/core/params/forecast_params.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/dot_loading_widget.dart';
 import 'package:weather_1_flutter/features/weather_feature/data/models/forecast_days_model.dart';
+import 'package:weather_1_flutter/features/weather_feature/data/models/suggest_city_model.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/forecast_days_entity.dart';
+import 'package:weather_1_flutter/features/weather_feature/domain/use_cases/get_suggestion_city_usecase.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/cw_status.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/fw_status.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/home_bloc.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/app_background.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/widgets/day_weather_view.dart';
+import 'package:weather_1_flutter/locator.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,6 +25,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController textEditingController = TextEditingController();
+  GetSuggestionCityUseCase getSuggestionCityUseCase = GetSuggestionCityUseCase(locator());
   String cityName = "Tehran";
   final PageController _pageController = PageController();
 
@@ -42,6 +48,53 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(height: height * 0.02,),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: width * 0.03),
+            child: TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                onSubmitted: (String prefix) {
+                  textEditingController.text = prefix;
+                  BlocProvider.of<HomeBloc>(context)
+                      .add(LoadCwEvent(prefix));
+                },
+                controller: textEditingController,
+                style: DefaultTextStyle.of(context).style.copyWith(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  hintText: "Enter a City...",
+                  hintStyle: TextStyle(color: Colors.white),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
+              ),
+              suggestionsCallback: (String pattern) {
+                // pattern == prefix
+                return getSuggestionCityUseCase(pattern);
+              },
+              itemBuilder: (BuildContext context, Data itemData) {
+                // itemData == SuggestCityModel
+                return ListTile(
+                  leading: const Icon(Icons.location_on),
+                  title: Text(itemData.name!),
+                  subtitle: Text("${itemData.region!}, ${itemData.country}"),
+                );
+              },
+              onSuggestionSelected: (Data suggestion) {
+                // suggestion == model
+                textEditingController.text = suggestion.name!;
+                BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(suggestion.name!));
+              },
+            ),
+          ),
+          // --------------------- main UI ---------------------
           BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) {
               // rebuild just when CwStatus changed
