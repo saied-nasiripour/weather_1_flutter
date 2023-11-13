@@ -1,4 +1,4 @@
-
+// current weather status
 import 'package:flutter/material.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
 

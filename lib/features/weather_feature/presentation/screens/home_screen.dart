@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: height * 0.02,),
+          // --------------------- Suggestion Text field ---------------------
           Padding(
             padding: EdgeInsets.symmetric(horizontal: width * 0.03),
             child: TypeAheadField(
