@@ -3,6 +3,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 
+@entity
 class CityEntity extends Equatable {
 
   @PrimaryKey(autoGenerate: true)
