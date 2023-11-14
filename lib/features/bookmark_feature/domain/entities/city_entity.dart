@@ -11,7 +11,7 @@ class CityEntity extends Equatable {
 
   final String name;
 
-  CityEntity(this.name);
+  CityEntity({required this.name});
 
   @override
   // TODO: implement props

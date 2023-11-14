@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // start load Fw event
                 BlocProvider.of<HomeBloc>(context).add(LoadFwEvent(forecastParams));
 
-                /// change Times to Hour --5:55 AM/PM----
+                /// change Times from second to Hour --5:55 AM/PM----
                 final sunrise = DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunrise,currentCityEntity.timezone);
                 final sunset =  DateConverter.changeDtToDateTimeHour(currentCityEntity.sys!.sunset,currentCityEntity.timezone);
 
