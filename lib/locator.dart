@@ -25,8 +25,7 @@ setup() async{
   - The instance of the dependency.
   */
 
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-  locator.registerSingleton<AppDatabase>(database);
+
 
   // repositories
   locator.registerSingleton<WeatherRepositoryAbstract>(WeatherRepositoryImplementation(locator()));
