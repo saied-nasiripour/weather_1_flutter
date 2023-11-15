@@ -1,10 +1,10 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:weather_1_flutter/core/params/forecast_params.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/dot_loading_widget.dart';
 import 'package:weather_1_flutter/core/utils/date_converter.dart';
+import 'package:weather_1_flutter/features/bookmark_feature/presentation/bloc/bookmark_bloc.dart';
 import 'package:weather_1_flutter/features/weather_feature/data/models/forecast_days_model.dart';
 import 'package:weather_1_flutter/features/weather_feature/data/models/suggest_city_model.dart';
 import 'package:weather_1_flutter/features/weather_feature/domain/entities/current_city_entity.dart';
@@ -14,6 +14,7 @@ import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/cw_
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/fw_status.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/bloc/home_bloc.dart';
 import 'package:weather_1_flutter/core/presentation/widgets/app_background.dart';
+import 'package:weather_1_flutter/features/weather_feature/presentation/widgets/bookmark_icon.dart';
 import 'package:weather_1_flutter/features/weather_feature/presentation/widgets/day_weather_view.dart';
 import 'package:weather_1_flutter/locator.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -50,50 +51,94 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: height * 0.02,),
-          // --------------------- Suggestion Text field ---------------------
+          // --------------------- City Search Box (Suggestion Text field) & Bookmark ---------------------
           Padding(
             padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-            child: TypeAheadField(
-              textFieldConfiguration: TextFieldConfiguration(
-                onSubmitted: (String prefix) {
-                  textEditingController.text = prefix;
-                  BlocProvider.of<HomeBloc>(context)
-                      .add(LoadCwEvent(prefix));
-                },
-                controller: textEditingController,
-                style: DefaultTextStyle.of(context).style.copyWith(
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  hintText: "Enter a City...",
-                  hintStyle: TextStyle(color: Colors.white),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+            child: Row(
+              children: [
+                // search box
+                Expanded(
+                  child: TypeAheadField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      onSubmitted: (String prefix) {
+                        textEditingController.text = prefix;
+                        BlocProvider.of<HomeBloc>(context)
+                            .add(LoadCwEvent(prefix));
+                      },
+                      controller: textEditingController,
+                      style: DefaultTextStyle.of(context).style.copyWith(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        hintText: "Enter a City...",
+                        hintStyle: TextStyle(color: Colors.white),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    suggestionsCallback: (String pattern) {
+                      // pattern == prefix
+                      return getSuggestionCityUseCase(pattern);
+                    },
+                    itemBuilder: (BuildContext context, Data itemData) {
+                      // itemData == SuggestCityModel
+                      return ListTile(
+                        leading: const Icon(Icons.location_on),
+                        title: Text(itemData.name!),
+                        subtitle: Text("${itemData.region!}, ${itemData.country}"),
+                      );
+                    },
+                    onSuggestionSelected: (Data suggestion) {
+                      // suggestion == model
+                      textEditingController.text = suggestion.name!;
+                      BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(suggestion.name!));
+                    },
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
                 ),
-              ),
-              suggestionsCallback: (String pattern) {
-                // pattern == prefix
-                return getSuggestionCityUseCase(pattern);
-              },
-              itemBuilder: (BuildContext context, Data itemData) {
-                // itemData == SuggestCityModel
-                return ListTile(
-                  leading: const Icon(Icons.location_on),
-                  title: Text(itemData.name!),
-                  subtitle: Text("${itemData.region!}, ${itemData.country}"),
-                );
-              },
-              onSuggestionSelected: (Data suggestion) {
-                // suggestion == model
-                textEditingController.text = suggestion.name!;
-                BlocProvider.of<HomeBloc>(context).add(LoadCwEvent(suggestion.name!));
-              },
+                const SizedBox(width: 10),
+                // bookmark
+                BlocBuilder<HomeBloc, HomeState>(
+                    buildWhen: (previous, current){
+                      if(previous.cwStatus == current.cwStatus){
+                        return false;
+                      }
+                      return true;
+                    },
+                    builder: (context, state){
+                      /// show Loading State for Cw
+                      if (state.cwStatus is CwLoading) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      /// show Error State for Cw
+                      if (state.cwStatus is CwError) {
+                        return IconButton(
+                          onPressed: (){
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //   content: Text("please load a city!"),
+                            //   behavior: SnackBarBehavior.floating, // Add this line
+                            // ));
+                          },
+                          icon: const Icon(Icons.error,color: Colors.white,size: 35),);
+                      }
+
+                      if(state.cwStatus is CwCompleted){
+                        final CwCompleted cwComplete = state.cwStatus as CwCompleted;
+                        BlocProvider.of<BookmarkBloc>(context).add(GetCityByNameEvent(cwComplete.currentCityEntity.name!));
+                        return BookMarkIcon(name: cwComplete.currentCityEntity.name!);
+                      }
+
+                      return Container();
+
+                    }
+                ),
+              ],
             ),
           ),
           // --------------------- main UI ---------------------
