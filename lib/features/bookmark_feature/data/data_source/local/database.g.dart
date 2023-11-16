@@ -120,14 +120,14 @@ class _$CityDao extends CityDao {
 
   @override
   Future<List<CityEntity>> getAllCity() async {
-    return _queryAdapter.queryList('SELECT * FROM City',
+    return _queryAdapter.queryList('SELECT * FROM CityEntity',
         mapper: (Map<String, Object?> row) =>
             CityEntity(name: row['name'] as String));
   }
 
   @override
   Future<CityEntity?> findCityByName(String name) async {
-    return _queryAdapter.query('SELECT * FROM City WHERE name = ?1',
+    return _queryAdapter.query('SELECT * FROM CityEntity WHERE name = ?1',
         mapper: (Map<String, Object?> row) =>
             CityEntity(name: row['name'] as String),
         arguments: [name]);
@@ -135,8 +135,8 @@ class _$CityDao extends CityDao {
 
   @override
   Future<void> deleteCityByName(String name) async {
-    await _queryAdapter
-        .queryNoReturn('SELECT FROM City WHERE name = ?1', arguments: [name]);
+    await _queryAdapter.queryNoReturn('SELECT FROM CityEntity WHERE name = ?1',
+        arguments: [name]);
   }
 
   @override

@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController textEditingController = TextEditingController();
   GetSuggestionCityUseCase getSuggestionCityUseCase = GetSuggestionCityUseCase(locator());
-  String cityName = "Tehran";
+  String cityName = "london";
   final PageController _pageController = PageController();
 
   @override
@@ -111,27 +111,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       return true;
                     },
                     builder: (context, state){
-                      /// show Loading State for Cw
+                      /// show Loading State for Cw (current weather)
                       if (state.cwStatus is CwLoading) {
                         return const CircularProgressIndicator();
-                      }
-
-                      /// show Error State for Cw
-                      if (state.cwStatus is CwError) {
-                        return IconButton(
-                          onPressed: (){
-                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            //   content: Text("please load a city!"),
-                            //   behavior: SnackBarBehavior.floating, // Add this line
-                            // ));
-                          },
-                          icon: const Icon(Icons.error,color: Colors.white,size: 35),);
                       }
 
                       if(state.cwStatus is CwCompleted){
                         final CwCompleted cwComplete = state.cwStatus as CwCompleted;
                         BlocProvider.of<BookmarkBloc>(context).add(GetCityByNameEvent(cwComplete.currentCityEntity.name!));
                         return BookMarkIcon(name: cwComplete.currentCityEntity.name!);
+                      }
+
+                      /// show Error State for Cw (current weather)
+                      if (state.cwStatus is CwError) {
+                        return IconButton(
+                          onPressed: (){
+                            // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            //   content: Text("please load a city!"),
+                            //   behavior: SnackBarBehavior.floating, // Add this line
+                            // ));
+                          },
+                          icon: const Icon(Icons.error,color: Colors.white,size: 35),
+                        );
                       }
 
                       return Container();
