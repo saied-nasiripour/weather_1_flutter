@@ -12,6 +12,16 @@ class BookmarkState extends Equatable {
       required this.getAllCityStatus,
       required this.deleteCityStatus});
 
+  /*
+  getCityStatus = old state
+  saveCityStatus = old state
+  getAllCityStatus = old state
+  deleteCityStatus = old state
+  newGetCityStatus = new state
+  newSaveCityStatus = new state
+  newGetAllCityStatus = new state
+  newDeleteCityStatus = new state
+  */
   BookmarkState copyWith(
       {GetCityStatus? newGetCityStatus,
       SaveCityStatus? newSaveCityStatus,
